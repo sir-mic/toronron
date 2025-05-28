@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Message Brewed Just For You ☕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #6F4E37 0%, #8B4513 50%, #A0522D 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .steam {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .steam-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: steam-rise 4s infinite ease-in-out;
+        }
+
+        @keyframes steam-rise {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .title {
+            color: #F4E4BC;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(244, 228, 188, 0.5);
+            animation: coffee-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes coffee-glow {
+            from { text-shadow: 0 0 20px rgba(244, 228, 188, 0.5); }
+            to { text-shadow: 0 0 30px rgba(244, 228, 188, 0.8), 0 0 40px rgba(139, 69, 19, 0.3); }
+        }
+
+        .instruction {
+            color: #D2B48C;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 2s ease-in 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .beans-collected {
+            color: #8B4513;
+            background: rgba(244, 228, 188, 0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-container {
+            background: rgba(244, 228, 188, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 2px solid rgba(244, 228, 188, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .sentence {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #F4E4BC;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-in-out;
+            font-family: 'Georgia', serif;
+            text-align: left;
+        }
+
+        .sentence.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sentence.hidden {
+            color: #8B7355;
+            filter: blur(3px);
+            user-select: none;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #d3a482 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor.collecting {
+            transform: scale(2);
+            background: radial-gradient(circle, #D2691E 0%, #8B4513 50%, transparent 70%);
+        }
+
+        .coffee-bean {
+            position: absolute;
+            width: 18px;
+            height: 12px;
+            background: linear-gradient(45deg, #8B4513 0%, #A0522D 50%, #6F4E37 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .coffee-bean::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 8px;
+            background: #4A2C1D;
+            border-radius: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .coffee-bean:hover {
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 10px #D2691E);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(10deg); }
+        }
+
+        .completion-message {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease-in-out;
+            margin-top: 30px;
+            background: rgba(244, 228, 188, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(244, 228, 188, 0.3);
+        }
+
+        .completion-message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .coffee-splash {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #8B4513;
+            border-radius: 50%;
+            animation: splash 1s linear forwards;
+        }
+
+        @keyframes splash {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+        }
+
+        .coffee-cup {
+            font-size: 3rem;
+            animation: gentle-steam 3s ease-in-out infinite;
+        }
+
+        @keyframes gentle-steam {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="steam" id="steam"></div>
+    <div class="cursor" id="cursor"></div>
+    
+    <div class="container">
+        <h1 class="title">☕ To Ron-Ron, My Favorite Cup of Chaos ☕</h1>
+        <p class="instruction">Each bean holds a piece of this little message, brewed from memories, laughter, and one hell of a bond, that took more than caffeine to create.</p>
+        
+        <div class="beans-collected">
+            <span class="coffee-cup">☕</span> Beans Collected: <span id="beanCount">0</span>/13
+        </div>
+
+        <div class="message-container">
+            <div class="sentence hidden" data-sentence="0">Ronalyn. Pards. Duy. Ron-Ron.</div>
+            <div class="sentence hidden" data-sentence="1">Ang dami mong pangalan, pero nag-iisa ka.</div>
+            <div class="sentence hidden" data-sentence="2">I am more than grateful that you are my FRIEND—a generous, loving, genuine, caring, pure, crazy, jolly, ulile friend. I don’t know what kind of good karma I must’ve earned to deserve friends like you all—but especially you.</div>
+            <div class="sentence hidden" data-sentence="3">You made my internship journey interesting, unforgettable even. You gave me something to look forward to, day after day. And now as I write this, pukingina naiiyak pa ako sa part na ‘to habang sinusulat—hayop ka talaga. That’s how much this meant to me.</div>
+            <div class="sentence hidden" data-sentence="4">This little webpage is my way of saying thank you, my way of trying to reciprocate the love and generosity you showed us (you showed me). Coffee theme, kasi alam mo na, we bonded best over a bitter cup of kape... and somehow, even bitterness tasted sweet when shared with you.</div>
+            <div class="sentence hidden" data-sentence="5">Things won’t ever be the same. The way I see conversations, the way I enjoy meals, the way I take siesta breaks—iba na. And our pantry sessions, our shared guilt after backstabbing people for fun, no one else could ever top that. That’s our thing. Ours lang.</div>
+            <div class="sentence hidden" data-sentence="6">Di ko pa sure kung kailan ko ‘to isesend—maybe after our trip to Maple Grove this Friday para mas emotional. But then again, magkikita pa pala tayo sa early June... bahala na. try ko muna itago para isipin mo na I don't have anything for you hsagshagshgas.</div>
+            <div class="sentence hidden" data-sentence="7">To my whole Servpro family—Mam Jisika, Mam Gwyn Macollete, Mam Dulce, Mam Romaniel, Mam Katherine (true name muna ngayon), Mam Adella (ultukin), Mam Gly (ulile)—I’ll miss you all.</div>
+            <div class="sentence hidden" data-sentence="8">But Ron-Ron, I will miss you the most.</div>
+            <div class="sentence hidden" data-sentence="9">Our chemistry just clicked, and that’s something rare. Something I didn’t expect but will always be thankful for.</div>
+            <div class="sentence hidden" data-sentence="10">I appreciate you. I’m proud of you. And lab na lab ko kayo kahit mga tangahin kayo.</div>
+            <div class="sentence hidden" data-sentence="11">This is goodbye for now, Pards.</div>
+            <div class="sentence hidden" data-sentence="12">Don’t be a stranger.
+                Pakyu. (Pero pakyu na may pagmamahal.)</div>
+        </div>
+
+        <div class="completion-message" id="completionMessage">
+            <h2 style="color: #D2691E; margin-bottom: 15px;">☕ From One Brewed Soul to Another ☕</h2>
+            <p style="color: #D2B48C; font-size: 1.1rem;">
+                "So if this chapter really ends here, just know you made this part of my life unexpectedly beautiful—
+                and that somewhere down the line, I’ll think of you... probably over coffee, probably smiling like an idiot." ☕💕
+                <br><br>
+                <span style="float: right; color: #CD853F;">– Mike</span>
+            </p>
+        
+            <div style="margin-top: 25px; text-align: center;">
+                <img src="runrun.jpg" alt="Coffee moment" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                </div>
+        </div>
+        
+    </div>
+
+    <script>
+        let beansCollected = 0;
+        const totalBeans = 13;
+        let coffeeBeans = [];
+        const sentences = document.querySelectorAll('.sentence');
+        
+        // Create background steam
+        function createSteam() {
+            const steamContainer = document.getElementById('steam');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'steam-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = Math.random() * 8 + 3 + 'px';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                steamContainer.appendChild(particle);
+            }
+        }
+
+        // Create collectible coffee beans
+        function createCoffeeBeans() {
+            for (let i = 0; i < totalBeans; i++) {
+                const bean = document.createElement('div');
+                bean.className = 'coffee-bean';
+                bean.style.left = Math.random() * (window.innerWidth - 100) + 50 + 'px';
+                bean.style.top = Math.random() * (window.innerHeight - 200) + 150 + 'px';
+                bean.style.animationDelay = Math.random() * 2 + 's';
+                
+                bean.addEventListener('click', collectBean);
+                document.body.appendChild(bean);
+                coffeeBeans.push(bean);
+            }
+        }
+
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 12 + 'px';
+            cursor.style.top = e.clientY - 12 + 'px';
+        });
+
+        // Collect bean function
+        function collectBean(e) {
+            const bean = e.target;
+            
+            // Create coffee splash effect
+            for (let i = 0; i < 6; i++) {
+                const splash = document.createElement('div');
+                splash.className = 'coffee-splash';
+                splash.style.left = e.clientX + (Math.random() - 0.5) * 40 + 'px';
+                splash.style.top = e.clientY + (Math.random() - 0.5) * 40 + 'px';
+                document.body.appendChild(splash);
+                
+                setTimeout(() => splash.remove(), 1000);
+            }
+            
+            // Remove the bean with animation
+            bean.style.transform = 'scale(0) rotate(360deg)';
+            bean.style.opacity = '0';
+            setTimeout(() => bean.remove(), 300);
+            
+            // Update counter
+            document.getElementById('beanCount').textContent = beansCollected + 1;
+            
+            // Add cursor effect
+            cursor.classList.add('collecting');
+            setTimeout(() => cursor.classList.remove('collecting'), 200);
+            
+            // Reveal the next sentence
+            if (beansCollected < sentences.length) {
+                const sentenceToReveal = sentences[beansCollected];
+                sentenceToReveal.classList.remove('hidden');
+                sentenceToReveal.classList.add('revealed');
+            }
+            
+            beansCollected++;
+            
+            // Check if all beans collected
+            if (beansCollected === totalBeans) {
+                setTimeout(() => {
+                    document.getElementById('completionMessage').classList.add('show');
+                }, 800);
+            }
+        }
+
+        // Initialize
+        createSteam();
+        createCoffeeBeans();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            coffeeBeans.forEach(bean => {
+                if (bean.parentNode) {
+                    bean.style.left = Math.random() * (window.innerWidth - 100) + 50 + 'px';
+                    bean.style.top = Math.random() * (window.innerHeight - 200) + 150 + 'px';
+                }
+            });
+        });
+
+        // Add some extra steam particles periodically
+        setInterval(() => {
+            if (document.querySelectorAll('.steam-particle').length < 30) {
+                const particle = document.createElement('div');
+                particle.className = 'steam-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = Math.random() * 8 + 3 + 'px';
+                document.getElementById('steam').appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 4000);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
