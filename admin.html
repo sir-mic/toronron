@@ -8,6 +8,14 @@
 <h1>Admin</h1>
 
 <button id="generate">Generate</button>
+
+<p>
+    <label>
+        <input type="checkbox" id="available" checked>
+        Available (show button on index page)
+    </label>
+</p>
+
 <button id="publish">Publish</button>
 
 <h2 id="activity"></h2>
@@ -59,7 +67,9 @@ document.getElementById("publish").onclick = publish;
 
 async function publish() {
 
-    if (!generatedActivity) {
+    const available = document.getElementById("available").checked;
+
+    if (available && !generatedActivity) {
         alert("Generate first.");
         return;
     }
@@ -72,7 +82,7 @@ async function publish() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                available: true,
+                available: available,
                 activity: generatedActivity
             })
         });
