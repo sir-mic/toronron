@@ -2,6 +2,60 @@
 <html>
 <head>
     <title>Admin</title>
+    <style>
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            font-family: sans-serif;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider::before {
+            transform: translateX(24px);
+        }
+    </style>
 </head>
 <body>
 
@@ -9,12 +63,13 @@
 
 <button id="generate">Generate</button>
 
-<p>
-    <label>
+<div class="toggle-wrap">
+    <label class="switch">
         <input type="checkbox" id="available" checked>
-        Available (show button on index page)
+        <span class="slider"></span>
     </label>
-</p>
+    <span id="availableLabel">Available</span>
+</div>
 
 <button id="publish">Publish</button>
 
@@ -63,7 +118,27 @@ document.getElementById("generate").onclick = () => {
 
 };
 
+document.getElementById("available").onchange = (e) => {
+    document.getElementById("availableLabel").textContent =
+        e.target.checked ? "Available" : "Not Available";
+};
+
 document.getElementById("publish").onclick = publish;
+
+// Sync toggle with current published state on page load
+fetch("https://sir-mic.github.io/toronron/state.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.json())
+    .then(state => {
+        const toggle = document.getElementById("available");
+        toggle.checked = !!state.available;
+        document.getElementById("availableLabel").textContent =
+            toggle.checked ? "Available" : "Not Available";
+        if (state.activity) {
+            generatedActivity = state.activity;
+            document.getElementById("activity").textContent = state.activity;
+        }
+    })
+    .catch(err => console.error("Failed to load current state:", err));
 
 async function publish() {
 
