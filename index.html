@@ -234,45 +234,84 @@
 }
 
 .modal{
-
-    display:none;
-
     position:fixed;
-
     inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(30, 18, 10, 0.65);
+    backdrop-filter:blur(4px);
+    z-index:200;
+    padding:20px;
+    opacity:0;
+    transition:opacity 0.25s ease;
+}
 
-    background:rgba(0,0,0,.55);
-
-    z-index:1000;
-
+.modal.show{
+    display:flex;
+    opacity:1;
 }
 
 .modal-content{
-
-    width:350px;
-
-    max-width:90%;
-
-    background:white;
-
-    margin:10% auto;
-
-    padding:25px;
-
-    border-radius:15px;
-
+    position:relative;
+    width:100%;
+    max-width:360px;
+    background:linear-gradient(160deg, #6F4E37 0%, #4A2C1D 100%);
+    border:1px solid rgba(244, 228, 188, 0.25);
+    border-radius:18px;
+    padding:30px 24px;
     text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.45);
+    transform:scale(0.94) translateY(8px);
+    transition:transform 0.25s cubic-bezier(.2,.8,.2,1);
+}
 
+.modal.show .modal-content{
+    transform:scale(1) translateY(0);
+}
+
+.modal-content h2{
+    font-family:'Georgia', serif;
+    font-weight:normal;
+    font-size:1.4rem;
+    color:#F4E4BC;
+    text-shadow:0 0 15px rgba(244, 228, 188, 0.4);
+    margin:6px 0 16px;
+}
+
+.modal-content #activityText{
+    font-family:'Georgia', serif;
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#F4E4BC;
+    letter-spacing:0.01em;
+    margin:0;
+    padding:16px 14px;
+    border:1px dashed rgba(244, 228, 188, 0.35);
+    border-radius:12px;
+    background:rgba(244, 228, 188, 0.08);
 }
 
 #closeModal{
-
-    float:right;
-
+    position:absolute;
+    top:12px;
+    right:16px;
+    font-size:1.5rem;
+    line-height:1;
+    color:#D2B48C;
     cursor:pointer;
+    padding:4px;
+    transition:color 0.15s;
+    -webkit-tap-highlight-color:transparent;
+}
 
-    font-size:28px;
+#closeModal:hover,
+#closeModal:active{
+    color:#F4E4BC;
+}
 
+@media (prefers-reduced-motion: reduce){
+    .modal, .modal-content{ transition-duration:0.01ms !important; }
 }
     </style>
 </head>
@@ -464,13 +503,13 @@
 
         text.textContent=state.activity;
 
-        modal.style.display="block";
+        modal.classList.add("show");
 
     };
 
     close.onclick=()=>{
 
-        modal.style.display="none";
+        modal.classList.remove("show");
 
     };
 
@@ -478,7 +517,7 @@
 
         if(e.target===modal)
 
-            modal.style.display="none";
+            modal.classList.remove("show");
 
     };
 
