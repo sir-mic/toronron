@@ -204,6 +204,7 @@
         padding:18px 16px;
         text-align:center;
         position:relative;
+        overflow:hidden;
         min-height:52px;
         display:flex;
         align-items:center;
@@ -227,6 +228,40 @@
 
     .ticket.filled .value{ display:block; }
     .ticket.filled .placeholder{ display:none; }
+
+    .ticket-content-blur{
+        filter:blur(6px);
+        user-select:none;
+        transition:filter 0.2s ease;
+    }
+
+    .blur-overlay{
+        position:absolute;
+        inset:0;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        background:rgba(43,30,21,0.35);
+        backdrop-filter:blur(2px);
+        cursor:pointer;
+        -webkit-tap-highlight-color:transparent;
+        border-radius:inherit;
+    }
+
+    .ticket.blur-active .blur-overlay{
+        display:flex;
+    }
+
+    .blur-overlay-label{
+        font-family:'JetBrains Mono', monospace;
+        font-size:0.78rem;
+        font-weight:600;
+        color:var(--text);
+        background:var(--surface-2);
+        border:1px solid var(--border);
+        padding:6px 12px;
+        border-radius:8px;
+    }
 
     .publish-bar{
         position:fixed;
@@ -344,6 +379,9 @@
         <div class="ticket" id="ticket">
             <span class="placeholder">Nothing generated yet</span>
             <span class="value" id="activityValue"></span>
+            <div class="blur-overlay" id="blurOverlay">
+                <span class="blur-overlay-label">🔒 Tap to reveal</span>
+            </div>
         </div>
     </section>
 
@@ -368,6 +406,7 @@ const els = {
     generate: document.getElementById("generate"),
     ticket: document.getElementById("ticket"),
     activityValue: document.getElementById("activityValue"),
+    blurOverlay: document.getElementById("blurOverlay"),
     publish: document.getElementById("publish"),
     statusDot: document.getElementById("statusDot"),
     statusText: document.getElementById("statusText"),
@@ -376,10 +415,16 @@ const els = {
 
 let generatedActivity = "";
 let toastTimer = null;
+let isBlurred = false;
 
 const acts = [
-    "No Coffee", "₱200", "Movie", "Museum",
-    "Arcade", "Walk", "Ice Cream", "Bowling", "Picnic"
+    "No Coffee", "₱200", "Movie", "Arcade", "Walk", "Ice Cream",
+    "Bowling", "Picnic",
+    "KTV", "Night Market", "Board Games", "Street Food",
+    "₱500 Challenge", "Thrift Shopping", "Sunset Watch",
+    "Dagat", "Stargazing", "What We Hate", "Sexy Time",
+    "Run Day", "Billiards", "Joy Ride", "Boba Run",
+    "Chill Day", "Dessert Date", "Food Trip", "Cooking Together"
 ];
 
 const days = [
@@ -404,6 +449,12 @@ function setActivity(text) {
     } else {
         els.ticket.classList.remove("filled");
     }
+}
+
+function setBlurred(state) {
+    isBlurred = state;
+    els.ticket.classList.toggle("blur-active", state);
+    els.activityValue.classList.toggle("ticket-content-blur", state);
 }
 
 function reflectAvailability(isAvailable) {
@@ -454,7 +505,10 @@ els.generate.addEventListener("click", () => {
     const today = new Date();
     const activity = acts[Math.floor(Math.random() * acts.length)];
     setActivity(activity + " " + days[today.getDay()]);
+    setBlurred(true);
 });
+
+els.blurOverlay.addEventListener("click", () => setBlurred(false));
 
 els.publish.addEventListener("click", publish);
 
@@ -468,7 +522,10 @@ async function loadState() {
         const state = await res.json();
 
         reflectAvailability(!!state.available);
-        if (state.activity) setActivity(state.activity);
+        if (state.activity) {
+            setActivity(state.activity);
+            setBlurred(true);
+        }
 
         els.statusDot.className = "status-dot ready";
         els.statusText.textContent = "synced";
