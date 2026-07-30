@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin</title>
+</head>
+<body>
+
+<h1>Admin</h1>
+
+<button id="generate">Generate</button>
+<button id="publish">Publish</button>
+
+<h2 id="activity"></h2>
+
+<script src="admin-config.js"></script>
+
+<script>
+
+let generatedActivity = "";
+
+const acts = [
+    "No Coffee",
+    "₱200",
+    "Movie",
+    "Museum",
+    "Arcade",
+    "Walk",
+    "Ice Cream",
+    "Bowling",
+    "Picnic"
+];
+
+document.getElementById("generate").onclick = () => {
+
+    const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+    const today = new Date();
+
+    const activity =
+        acts[Math.floor(Math.random()*acts.length)];
+
+    generatedActivity =
+        activity + " " + days[today.getDay()];
+
+    document.getElementById("activity").textContent =
+        generatedActivity;
+
+};
+
+document.getElementById("publish").onclick = publish;
+
+async function publish() {
+
+    if (!generatedActivity) {
+        alert("Generate first.");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("https://turon-admin.mikeharoldhandig12.workers.dev/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                available: true,
+                activity: generatedActivity
+            })
+        });
+
+        const text = await response.text();
+
+        console.log(text);
+
+        if (response.ok) {
+            alert("Published!");
+        } else {
+            alert("Publish failed.");
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    }
+}
+
+</script>
+
+</body>
+</html>

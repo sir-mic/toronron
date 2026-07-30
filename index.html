@@ -211,11 +211,74 @@
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
         }
+
+
+
+        #activityBtn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+
+    width:60px;
+    height:60px;
+
+    border:none;
+    border-radius:50%;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+    z-index:999;
+}
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.55);
+
+    z-index:1000;
+
+}
+
+.modal-content{
+
+    width:350px;
+
+    max-width:90%;
+
+    background:white;
+
+    margin:10% auto;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+}
+
+#closeModal{
+
+    float:right;
+
+    cursor:pointer;
+
+    font-size:28px;
+
+}
     </style>
 </head>
 <body>
     <div class="steam" id="steam"></div>
     <div class="cursor" id="cursor"></div>
+
     
     <div class="container">
         <h1 class="title">☕ To Ron-Ron, My Favorite Cup of Chaos ☕</h1>
@@ -233,7 +296,7 @@
             <div class="sentence hidden" data-sentence="4">This little webpage is my way of saying thank you, my way of trying to reciprocate the love and generosity you showed us (you showed me). Coffee theme, kasi alam mo na, we bonded best over a bitter cup of kape... and somehow, even bitterness tasted sweet when shared with you.</div>
             <div class="sentence hidden" data-sentence="5">Things won’t ever be the same. The way I see conversations, the way I enjoy meals, the way I take siesta breaks—iba na. And our pantry sessions, our shared guilt after backstabbing people for fun, no one else could ever top that. That’s our thing. Ours lang.</div>
             <div class="sentence hidden" data-sentence="6">Di ko pa sure kung kailan ko ‘to isesend—maybe after our trip to Maple Grove this Friday para mas emotional. But then again, magkikita pa pala tayo sa early June... bahala na. try ko muna itago para isipin mo na I don't have anything for you hsagshagshgas.</div>
-            <div class="sentence hidden" data-sentence="7">To my whole Servpro family—Mam Jisika, Mam Gwyn Macollete, Mam Dulce, Mam Romaniel, Mam Katherine (true name muna ngayon), Mam Adella (Ulile), Mam Gly (Ultukin)—I’ll miss you all.</div>
+            <div class="sentence hidden" data-sentence="7">To my whole Servpro family—Mam Jisika, Mam Gwyn Macollete, Mam Dulce, Mam Romaniel, Mam Katherine (true name muna ngayon), Mam Adella (ultukin), Mam Gly (ulile)—I’ll miss you all.</div>
             <div class="sentence hidden" data-sentence="8">But Ron-Ron, I will miss you the most.</div>
             <div class="sentence hidden" data-sentence="9">Our chemistry just clicked, and that’s something rare. Something I didn’t expect but will always be thankful for.</div>
             <div class="sentence hidden" data-sentence="10">I appreciate you. I’m proud of you. And lab na lab ko kayo kahit mga tangahin kayo.</div>
@@ -255,6 +318,8 @@
                 <img src="runrun.jpg" alt="Coffee moment" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                 </div>
         </div>
+
+
         
     </div>
 
@@ -370,6 +435,64 @@
                 setTimeout(() => particle.remove(), 4000);
             }
         }, 2000);
+
+
+        fetch("state.json")
+.then(r=>r.json())
+.then(state=>{
+
+    const btn=document.getElementById("activityBtn");
+
+    const modal=document.getElementById("activityModal");
+
+    const text=document.getElementById("activityText");
+
+    const close=document.getElementById("closeModal");
+
+    if(!state.available){
+
+        btn.style.display="none";
+
+        return;
+
+    }
+
+    btn.onclick=()=>{
+
+        text.textContent=state.activity;
+
+        modal.style.display="block";
+
+    };
+
+    close.onclick=()=>{
+
+        modal.style.display="none";
+
+    };
+
+    window.onclick=(e)=>{
+
+        if(e.target===modal)
+
+            modal.style.display="none";
+
+    };
+
+});
     </script>
+
+
+<div id="activityModal" class="modal">
+    <div class="modal-content">
+        <span id="closeModal">&times;</span>
+
+        <h2>Today's Hangout</h2>
+
+        <p id="activityText"></p>
+    </div>
+</div>
+
+<button id="activityBtn">🎲</button>
 </body>
 </html>
