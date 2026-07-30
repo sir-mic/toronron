@@ -215,6 +215,7 @@
 
 
         #activityBtn{
+    display:none;
     position:fixed;
     bottom:20px;
     right:20px;
@@ -437,7 +438,7 @@
         }, 2000);
 
 
-        fetch("state.json")
+        fetch("state.json?t=" + Date.now(), { cache: "no-store" })
 .then(r=>r.json())
 .then(state=>{
 
@@ -456,6 +457,8 @@
         return;
 
     }
+
+    btn.style.display="block";
 
     btn.onclick=()=>{
 
@@ -479,7 +482,8 @@
 
     };
 
-});
+})
+.catch(err => console.error("Failed to load state:", err));
     </script>
 
 
