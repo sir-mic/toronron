@@ -317,7 +317,7 @@
 <body>
 
 <header>
-    <h1>mic<span>.</span></h1>
+    <h1>Admin<span>.</span></h1>
     <div class="status-dot" id="statusDot"><i></i><span id="statusText">loading</span></div>
 </header>
 
@@ -328,7 +328,7 @@
         <div class="avail-row">
             <div class="avail-copy">
                 <h2 id="availTitle">Available</h2>
-                <p id="availDesc">The hangout button shows on the site.</p>
+                <p id="availDesc">The hangout button shows on the site. Saves instantly.</p>
             </div>
             <label class="switch">
                 <input type="checkbox" id="available" disabled>
@@ -422,8 +422,34 @@ function setControlsEnabled(enabled) {
     els.publish.disabled = !enabled;
 }
 
-els.available.addEventListener("change", (e) => {
-    reflectAvailability(e.target.checked);
+els.available.addEventListener("change", async (e) => {
+    const isAvailable = e.target.checked;
+    reflectAvailability(isAvailable);
+    els.available.disabled = true;
+
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                available: isAvailable,
+                activity: generatedActivity
+            })
+        });
+
+        if (response.ok) {
+            showToast(isAvailable ? "Now available" : "Now hidden", "success");
+        } else {
+            throw new Error("Status " + response.status);
+        }
+    } catch (err) {
+        console.error(err);
+        // Revert the toggle since the change didn't actually save
+        reflectAvailability(!isAvailable);
+        showToast("Couldn't update — try again", "error");
+    } finally {
+        els.available.disabled = false;
+    }
 });
 
 els.generate.addEventListener("click", () => {
