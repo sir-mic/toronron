@@ -477,52 +477,43 @@
         }, 2000);
 
 
-        fetch("https://turon-admin.mikeharoldhandig12.workers.dev/?t=" + Date.now(), { cache: "no-store" })
-.then(r=>r.json())
-.then(state=>{
+        function refreshState() {
+            fetch("https://turon-admin.mikeharoldhandig12.workers.dev/?t=" + Date.now(), { cache: "no-store" })
+            .then(r => r.json())
+            .then(state => {
 
-    const btn=document.getElementById("activityBtn");
+                const btn = document.getElementById("activityBtn");
+                const modal = document.getElementById("activityModal");
+                const text = document.getElementById("activityText");
+                const close = document.getElementById("closeModal");
 
-    const modal=document.getElementById("activityModal");
+                if (!state.available) {
+                    btn.style.display = "none";
+                    return;
+                }
 
-    const text=document.getElementById("activityText");
+                btn.style.display = "block";
 
-    const close=document.getElementById("closeModal");
+                btn.onclick = () => {
+                    text.textContent = state.activity;
+                    modal.classList.add("show");
+                };
 
-    if(!state.available){
+                close.onclick = () => {
+                    modal.classList.remove("show");
+                };
 
-        btn.style.display="none";
+                window.onclick = (e) => {
+                    if (e.target === modal)
+                        modal.classList.remove("show");
+                };
 
-        return;
+            })
+            .catch(err => console.error("Failed to load state:", err));
+        }
 
-    }
-
-    btn.style.display="block";
-
-    btn.onclick=()=>{
-
-        text.textContent=state.activity;
-
-        modal.classList.add("show");
-
-    };
-
-    close.onclick=()=>{
-
-        modal.classList.remove("show");
-
-    };
-
-    window.onclick=(e)=>{
-
-        if(e.target===modal)
-
-            modal.classList.remove("show");
-
-    };
-
-})
-.catch(err => console.error("Failed to load state:", err));
+        refreshState();
+        setInterval(refreshState, 5000);
     </script>
 
 
