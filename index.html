@@ -298,50 +298,48 @@
             50% { transform: translateY(-4px); }
         }
 
-        /* ---- Hangout chip ---- */
+        /* ---- Hangout drop ---- */
         #activityBtn{
-            display:block;
-            max-height:0;
-            opacity:0;
-            overflow:hidden;
-            margin:0 auto;
-            max-width:min(100%, 340px);
-            min-height:52px;
-            padding:12px 24px;
-            border-radius:28px;
-            font-family:'Fraunces', 'Georgia', serif;
-            font-weight:600;
-            font-size:clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+            display:none;
+            position:fixed;
+            right:max(18px, env(safe-area-inset-right));
+            bottom:calc(20px + env(safe-area-inset-bottom));
+            width:64px;
+            height:64px;
+            border-radius:50%;
+            font-size:24px;
+            line-height:1;
+            letter-spacing:-2px;
+            place-items:center;
+            cursor:pointer;
+            z-index:999;
             color:#FFF6E5;
             background:linear-gradient(145deg, #C1502E, #8B4513);
             border:1px solid rgba(244, 228, 188, 0.45);
-            cursor:pointer;
-            z-index:999;
-            box-shadow:0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+            box-shadow:0 8px 22px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.25);
             -webkit-tap-highlight-color:transparent;
             touch-action:manipulation;
-            transform:translateY(-8px) scale(0.95);
-            pointer-events:none;
-            transition:max-height 0.45s cubic-bezier(.2,.8,.2,1), opacity 0.45s ease,
-                       transform 0.45s cubic-bezier(.34,1.56,.64,1), margin 0.45s ease;
+            transition:transform 0.2s ease;
             animation:chip-glow 2.4s ease-in-out infinite;
         }
 
         #activityBtn.show{
-            max-height:90px;
-            opacity:1;
-            margin-top:10px;
-            transform:translateY(0) scale(1);
-            pointer-events:auto;
+            display:grid;
+            animation:chip-pop 0.4s cubic-bezier(.34,1.56,.64,1), chip-glow 2.4s ease-in-out infinite 0.4s;
         }
 
-        #activityBtn:hover{ filter:brightness(1.08); }
+        #activityBtn:hover{ transform:translateY(-2px) scale(1.06); }
 
-        #activityBtn:active{ transform:scale(0.96); }
+        #activityBtn:active{ transform:scale(0.92); }
+
+        @keyframes chip-pop{
+            from{ transform:scale(0); opacity:0; }
+            to{ transform:scale(1); opacity:1; }
+        }
 
         @keyframes chip-glow{
-            0%, 100%{ box-shadow:0 6px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25); }
-            50%{ box-shadow:0 6px 26px rgba(210,105,30,0.55), inset 0 1px 0 rgba(255,255,255,0.25); }
+            0%, 100%{ box-shadow:0 8px 22px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
+            50%{ box-shadow:0 8px 26px rgba(210,105,30,0.55), inset 0 1px 0 rgba(255,255,255,0.25); }
         }
 
         /* ---- Modal ---- */
@@ -429,8 +427,8 @@
             .container{ padding-bottom:96px; }
             .coffee-bean{ width:22px; height:14px; }
 
-            /* Keep progress + hangout drop pinned while scrolling the letter */
-            .hud{
+            /* Keep progress pinned while scrolling the letter */
+            .beans-collected{
                 position: sticky;
                 top: 10px;
                 z-index: 50;
@@ -455,12 +453,8 @@
         <h1 class="title">☕ To Ron-Ron, My Favorite Cup of Chaos ☕</h1>
         <p class="instruction">Each bean holds a piece of this little message, brewed from memories, laughter, and one hell of a bond, that took more than caffeine to create.</p>
 
-        <div class="hud">
-            <div class="beans-collected">
-                <span class="coffee-cup">☕</span> Beans Collected: <span id="beanCount">0</span>/13
-            </div>
-
-            <button id="activityBtn" aria-label="Show today's hangout">🎲 Random Trip! 👀</button>
+        <div class="beans-collected">
+            <span class="coffee-cup">☕</span> Beans Collected: <span id="beanCount">0</span>/13
         </div>
 
         <div class="message-container">
@@ -504,6 +498,8 @@
             <p id="activityText"></p>
         </div>
     </div>
+
+    <button id="activityBtn" aria-label="Show today's hangout">🎲👀</button>
 
     <script>
         /* ================= Bean game ================= */
@@ -647,6 +643,7 @@
 
         /* ============ Live state sync (instant) ============ */
         const WORKER_URL = "https://turon-admin.zeroeight.workers.dev/";
+        console.log("%c☕ turon sync v3", "color:#D2691E;font-weight:bold;");
         const POLL_FAST = 1000;   // while tab is visible — feels instant
         const POLL_SLOW = 8000;   // while tab is hidden
 
