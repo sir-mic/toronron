@@ -414,8 +414,22 @@ const els = {
 };
 
 let generatedActivity = "";
+let serverActivity = "";
 let toastTimer = null;
 let isBlurred = false;
+
+// Push state instantly to any open index page in this browser
+const syncChannel = ("BroadcastChannel" in window) ? new BroadcastChannel("turon-state") : null;
+
+function broadcastState(available, activity) {
+    try {
+        syncChannel && syncChannel.postMessage({ available, activity });
+    } catch (_) {}
+}
+
+function effectiveActivity() {
+    return generatedActivity || serverActivity;
+}
 
 const acts = [
     "No Coffee", "₱200", "Movie", "Arcade", "Walk", "Ice Cream",
@@ -482,11 +496,13 @@ els.available.addEventListener("change", async (e) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 available: isAvailable,
-                activity: generatedActivity
+                activity: effectiveActivity()
             })
         });
 
         if (response.ok) {
+            serverActivity = effectiveActivity();
+            broadcastState(isAvailable, serverActivity);
             showToast(isAvailable ? "Now available" : "Now hidden", "success");
         } else {
             throw new Error("Status " + response.status);
@@ -522,6 +538,7 @@ async function loadState() {
         const state = await res.json();
 
         reflectAvailability(!!state.available);
+        serverActivity = state.activity || "";
         if (state.activity) {
             setActivity(state.activity);
             setBlurred(true);
@@ -541,8 +558,9 @@ async function loadState() {
 
 async function publish() {
     const available = els.available.checked;
+    const activity = effectiveActivity();
 
-    if (available && !generatedActivity) {
+    if (available && !activity) {
         showToast("Generate an activity first", "error");
         return;
     }
@@ -556,11 +574,13 @@ async function publish() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 available,
-                activity: generatedActivity
+                activity
             })
         });
 
         if (response.ok) {
+            serverActivity = activity;
+            broadcastState(available, activity);
             showToast("Published", "success");
             els.statusText.textContent = "synced";
             els.statusDot.className = "status-dot ready";
