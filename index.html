@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4A2C1D">
+    <meta name="color-scheme" content="dark">
     <title>A Special Message Brewed Just For You ☕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,35 +16,46 @@
             box-sizing: border-box;
         }
 
+        html {
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #6F4E37 0%, #8B4513 50%, #A0522D 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             overflow-x: hidden;
-            cursor: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
         }
 
         .steam {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
             z-index: 1;
+            overflow: hidden;
         }
 
         .steam-particle {
             position: absolute;
+            bottom: -20px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            animation: steam-rise 4s infinite ease-in-out;
+            animation: steam-rise 5s infinite ease-in-out;
+            will-change: transform, opacity;
         }
 
         @keyframes steam-rise {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            15% { opacity: 0.7; }
+            85% { opacity: 0.25; }
+            100% { transform: translateY(-105vh) scale(1.5); opacity: 0; }
         }
 
         .container {
@@ -47,14 +63,19 @@
             z-index: 2;
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: clamp(28px, 5vw, 48px) clamp(16px, 4vw, 24px) 60px;
             text-align: center;
         }
 
         .title {
+            font-family: 'Fraunces', 'Georgia', serif;
+            font-weight: 500;
             color: #F4E4BC;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: clamp(1.55rem, 1rem + 3vw, 2.5rem);
+            line-height: 1.3;
+            letter-spacing: 0.01em;
+            max-width: 22ch;
+            margin: 0 auto 18px;
             text-shadow: 0 0 20px rgba(244, 228, 188, 0.5);
             animation: coffee-glow 2s ease-in-out infinite alternate;
         }
@@ -66,8 +87,10 @@
 
         .instruction {
             color: #D2B48C;
-            font-size: 1.2rem;
-            margin-bottom: 40px;
+            font-size: clamp(1rem, 0.9rem + 0.75vw, 1.2rem);
+            line-height: 1.65;
+            max-width: 58ch;
+            margin: 0 auto clamp(28px, 5vw, 44px);
             opacity: 0;
             animation: fadeIn 2s ease-in 1s forwards;
         }
@@ -78,47 +101,81 @@
 
         .beans-collected {
             color: #8B4513;
-            background: rgba(244, 228, 188, 0.9);
-            padding: 10px 20px;
+            background: rgba(244, 228, 188, 0.92);
+            backdrop-filter: blur(6px);
+            padding: 10px 22px;
             border-radius: 25px;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+            margin-bottom: clamp(22px, 4vw, 32px);
             font-weight: bold;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
+        #beanCount {
+            min-width: 1.2em;
+            display: inline-block;
+        }
+
         .message-container {
-            background: rgba(244, 228, 188, 0.15);
+            background: rgba(244, 228, 188, 0.12);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 40px;
-            margin: 40px 0;
-            border: 2px solid rgba(244, 228, 188, 0.3);
+            padding: clamp(22px, 5vw, 40px);
+            margin: 0 auto clamp(28px, 5vw, 44px);
+            border: 1px solid rgba(244, 228, 188, 0.3);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .sentence {
-            font-size: 1.3rem;
+            display: none;
+            font-size: clamp(1.02rem, 0.92rem + 0.65vw, 1.3rem);
             line-height: 1.8;
             color: #F4E4BC;
             margin-bottom: 15px;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.8s ease-in-out;
-            font-family: 'Georgia', serif;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             text-align: left;
         }
 
+        .sentence:last-of-type { margin-bottom: 0; }
+
         .sentence.revealed {
+            display: block;
             opacity: 1;
             transform: translateY(0);
         }
 
-        .sentence.hidden {
-            color: #8B7355;
-            filter: blur(3px);
-            user-select: none;
+        /* Witty barista commentary */
+        .brewing-note {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px dashed rgba(244, 228, 188, 0.25);
+            color: #D2B48C;
+            font-style: italic;
+            font-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.1rem);
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.6s ease, margin 0.6s ease, padding 0.6s ease, max-height 0.6s ease;
+        }
+
+        .brewing-note.gone {
+            opacity: 0;
+            margin-top: 0;
+            padding-top: 0;
+            border-top-color: transparent;
+            max-height: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        @keyframes note-bounce {
+            0% { transform: scale(0.97); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
         .cursor {
@@ -130,6 +187,11 @@
             pointer-events: none;
             z-index: 1000;
             transition: transform 0.1s ease;
+            display: none;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .cursor { display: block; }
         }
 
         .cursor.collecting {
@@ -150,6 +212,14 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* Invisible halo so beans are easy to tap on touch screens */
+        .coffee-bean::after {
+            content: '';
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+        }
+
         .coffee-bean::before {
             content: '';
             position: absolute;
@@ -167,18 +237,24 @@
             filter: drop-shadow(0 0 10px #D2691E);
         }
 
+        .coffee-bean.collected {
+            animation: none;
+            transform: scale(0) rotate(360deg) !important;
+            opacity: 0 !important;
+        }
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(10deg); }
+            0%, 100% { translate: 0 0; rotate: 0deg; }
+            50% { translate: 0 -8px; rotate: 10deg; }
         }
 
         .completion-message {
             opacity: 0;
-            transform: scale(0.8);
-            transition: all 1s ease-in-out;
-            margin-top: 30px;
+            transform: scale(0.96);
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            margin-top: clamp(20px, 4vw, 30px);
             background: rgba(244, 228, 188, 0.1);
-            padding: 20px;
+            padding: clamp(18px, 4vw, 26px);
             border-radius: 15px;
             border: 1px solid rgba(244, 228, 188, 0.3);
         }
@@ -188,161 +264,222 @@
             transform: scale(1);
         }
 
+        .completion-message img {
+            max-width: min(100%, 520px);
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        }
+
         .coffee-splash {
-            position: absolute;
+            position: fixed;
             width: 6px;
             height: 6px;
-            background: #8B4513;
+            background: #d9a06b;
             border-radius: 50%;
-            animation: splash 1s linear forwards;
+            pointer-events: none;
+            z-index: 999;
+            animation: splash 0.8s cubic-bezier(.2,.7,.3,1) forwards;
         }
 
         @keyframes splash {
             0% { transform: scale(0) rotate(0deg); opacity: 1; }
-            100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+            100% { transform: scale(2.2) rotate(180deg); opacity: 0; }
         }
 
         .coffee-cup {
-            font-size: 3rem;
+            font-size: 1.25em;
             animation: gentle-steam 3s ease-in-out infinite;
+            display: inline-block;
         }
 
         @keyframes gentle-steam {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-4px); }
         }
 
-
-
+        /* ---- Hangout button ---- */
         #activityBtn{
-    display:none;
-    position:fixed;
-    bottom:20px;
-    right:20px;
+            display:none;
+            position:fixed;
+            right:max(20px, env(safe-area-inset-right));
+            bottom:calc(22px + env(safe-area-inset-bottom));
+            width:62px;
+            height:62px;
+            border-radius:50%;
+            font-size:26px;
+            line-height:1;
+            place-items:center;
+            cursor:pointer;
+            z-index:999;
+            background:linear-gradient(145deg, #A0522D, #6F4E37);
+            border:1px solid rgba(244, 228, 188, 0.35);
+            box-shadow:0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+            -webkit-tap-highlight-color:transparent;
+            touch-action:manipulation;
+            transition:transform 0.2s ease;
+        }
 
-    width:60px;
-    height:60px;
+        #activityBtn.show{
+            display:grid;
+            animation:btn-pop 0.35s cubic-bezier(.34,1.56,.64,1);
+        }
 
-    border:none;
-    border-radius:50%;
+        #activityBtn:hover{ transform:translateY(-2px) scale(1.05); }
 
-    font-size:24px;
+        #activityBtn:active{ transform:scale(0.94); }
 
-    cursor:pointer;
+        @keyframes btn-pop{
+            from{ transform:scale(0); opacity:0; }
+            to{ transform:scale(1); opacity:1; }
+        }
 
-    z-index:999;
-}
+        #activityBtn::after{
+            content:'';
+            position:absolute;
+            inset:-4px;
+            border-radius:50%;
+            border:2px solid rgba(210, 105, 30, 0.55);
+            animation:pulse-ring 2.2s ease-out infinite;
+        }
 
-.modal{
-    position:fixed;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    background:rgba(30, 18, 10, 0.65);
-    backdrop-filter:blur(4px);
-    z-index:200;
-    padding:20px;
-    opacity:0;
-    transition:opacity 0.25s ease;
-}
+        @keyframes pulse-ring{
+            0%{ transform:scale(0.9); opacity:0.8; }
+            70%, 100%{ transform:scale(1.45); opacity:0; }
+        }
 
-.modal.show{
-    display:flex;
-    opacity:1;
-}
+        /* ---- Modal ---- */
+        .modal{
+            position:fixed;
+            inset:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(30, 18, 10, 0.65);
+            backdrop-filter:blur(4px);
+            z-index:200;
+            padding:20px;
+            opacity:0;
+            visibility:hidden;
+            transition:opacity 0.25s ease, visibility 0.25s ease;
+        }
 
-.modal-content{
-    position:relative;
-    width:100%;
-    max-width:360px;
-    background:linear-gradient(160deg, #6F4E37 0%, #4A2C1D 100%);
-    border:1px solid rgba(244, 228, 188, 0.25);
-    border-radius:18px;
-    padding:30px 24px;
-    text-align:center;
-    box-shadow:0 20px 50px rgba(0,0,0,0.45);
-    transform:scale(0.94) translateY(8px);
-    transition:transform 0.25s cubic-bezier(.2,.8,.2,1);
-}
+        .modal.show{
+            opacity:1;
+            visibility:visible;
+        }
 
-.modal.show .modal-content{
-    transform:scale(1) translateY(0);
-}
+        .modal-content{
+            position:relative;
+            width:100%;
+            max-width:360px;
+            background:linear-gradient(160deg, #6F4E37 0%, #4A2C1D 100%);
+            border:1px solid rgba(244, 228, 188, 0.25);
+            border-radius:18px;
+            padding:30px 24px;
+            text-align:center;
+            box-shadow:0 20px 50px rgba(0,0,0,0.45);
+            transform:scale(0.94) translateY(8px);
+            transition:transform 0.25s cubic-bezier(.2,.8,.2,1);
+        }
 
-.modal-content h2{
-    font-family:'Georgia', serif;
-    font-weight:normal;
-    font-size:1.4rem;
-    color:#F4E4BC;
-    text-shadow:0 0 15px rgba(244, 228, 188, 0.4);
-    margin:6px 0 16px;
-}
+        .modal.show .modal-content{
+            transform:scale(1) translateY(0);
+        }
 
-.modal-content #activityText{
-    font-family:'Georgia', serif;
-    font-size:1.1rem;
-    font-weight:bold;
-    color:#F4E4BC;
-    letter-spacing:0.01em;
-    margin:0;
-    padding:16px 14px;
-    border:1px dashed rgba(244, 228, 188, 0.35);
-    border-radius:12px;
-    background:rgba(244, 228, 188, 0.08);
-}
+        .modal-content h2{
+            font-family:'Fraunces', 'Georgia', serif;
+            font-weight:600;
+            font-size:1.4rem;
+            color:#F4E4BC;
+            text-shadow:0 0 15px rgba(244, 228, 188, 0.4);
+            margin:6px 0 16px;
+        }
 
-#closeModal{
-    position:absolute;
-    top:12px;
-    right:16px;
-    font-size:1.5rem;
-    line-height:1;
-    color:#D2B48C;
-    cursor:pointer;
-    padding:4px;
-    transition:color 0.15s;
-    -webkit-tap-highlight-color:transparent;
-}
+        .modal-content #activityText{
+            font-family:'Georgia', serif;
+            font-size:1.1rem;
+            font-weight:bold;
+            color:#F4E4BC;
+            letter-spacing:0.01em;
+            margin:0;
+            padding:16px 14px;
+            border:1px dashed rgba(244, 228, 188, 0.35);
+            border-radius:12px;
+            background:rgba(244, 228, 188, 0.08);
+            overflow-wrap:break-word;
+        }
 
-#closeModal:hover,
-#closeModal:active{
-    color:#F4E4BC;
-}
+        #closeModal{
+            position:absolute;
+            top:12px;
+            right:16px;
+            font-size:1.5rem;
+            line-height:1;
+            color:#D2B48C;
+            cursor:pointer;
+            padding:4px;
+            transition:color 0.15s;
+            -webkit-tap-highlight-color:transparent;
+        }
 
-@media (prefers-reduced-motion: reduce){
-    .modal, .modal-content{ transition-duration:0.01ms !important; }
-}
+        #closeModal:hover,
+        #closeModal:active{
+            color:#F4E4BC;
+        }
+
+        /* ---- Small screens ---- */
+        @media (max-width: 600px){
+            .container{ padding-bottom:96px; }
+            .coffee-bean{ width:22px; height:14px; }
+
+            /* Keep progress pinned while scrolling the letter */
+            .beans-collected{
+                position: sticky;
+                top: 10px;
+                z-index: 50;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            *, *::before, *::after{
+                animation-duration:0.01ms !important;
+                animation-iteration-count:1 !important;
+                transition-duration:0.01ms !important;
+            }
+            html{ scroll-behavior:auto; }
+        }
     </style>
 </head>
 <body>
     <div class="steam" id="steam"></div>
     <div class="cursor" id="cursor"></div>
 
-    
     <div class="container">
         <h1 class="title">☕ To Ron-Ron, My Favorite Cup of Chaos ☕</h1>
         <p class="instruction">Each bean holds a piece of this little message, brewed from memories, laughter, and one hell of a bond, that took more than caffeine to create.</p>
-        
+
         <div class="beans-collected">
             <span class="coffee-cup">☕</span> Beans Collected: <span id="beanCount">0</span>/13
         </div>
 
         <div class="message-container">
-            <div class="sentence hidden" data-sentence="0">Ronalyn. Pards. Duy. Ron-Ron.</div>
-            <div class="sentence hidden" data-sentence="1">Ang dami mong pangalan, pero nag-iisa ka.</div>
-            <div class="sentence hidden" data-sentence="2">I am more than grateful that you are my FRIEND—a generous, loving, genuine, caring, pure, crazy, jolly, ulile friend. I don’t know what kind of good karma I must’ve earned to deserve friends like you all—but especially you.</div>
-            <div class="sentence hidden" data-sentence="3">You made my internship journey interesting, unforgettable even. You gave me something to look forward to, day after day. And now as I write this, pukingina naiiyak pa ako sa part na ‘to habang sinusulat—hayop ka talaga. That’s how much this meant to me.</div>
-            <div class="sentence hidden" data-sentence="4">This little webpage is my way of saying thank you, my way of trying to reciprocate the love and generosity you showed us (you showed me). Coffee theme, kasi alam mo na, we bonded best over a bitter cup of kape... and somehow, even bitterness tasted sweet when shared with you.</div>
-            <div class="sentence hidden" data-sentence="5">Things won’t ever be the same. The way I see conversations, the way I enjoy meals, the way I take siesta breaks—iba na. And our pantry sessions, our shared guilt after backstabbing people for fun, no one else could ever top that. That’s our thing. Ours lang.</div>
-            <div class="sentence hidden" data-sentence="6">Di ko pa sure kung kailan ko ‘to isesend—maybe after our trip to Maple Grove this Friday para mas emotional. But then again, magkikita pa pala tayo sa early June... bahala na. try ko muna itago para isipin mo na I don't have anything for you hsagshagshgas.</div>
-            <div class="sentence hidden" data-sentence="7">To my whole Servpro family—Mam Jisika, Mam Gwyn Macollete, Mam Dulce, Mam Romaniel, Mam Katherine (true name muna ngayon), Mam Adella (ultukin), Mam Gly (ulile)—I’ll miss you all.</div>
-            <div class="sentence hidden" data-sentence="8">But Ron-Ron, I will miss you the most.</div>
-            <div class="sentence hidden" data-sentence="9">Our chemistry just clicked, and that’s something rare. Something I didn’t expect but will always be thankful for.</div>
-            <div class="sentence hidden" data-sentence="10">I appreciate you. I’m proud of you. And lab na lab ko kayo kahit mga tangahin kayo.</div>
-            <div class="sentence hidden" data-sentence="11">This is goodbye for now, Pards.</div>
-            <div class="sentence hidden" data-sentence="12">Don’t be a stranger.
+            <div class="sentence" data-sentence="0">Ronalyn. Pards. Duy. Ron-Ron.</div>
+            <div class="sentence" data-sentence="1">Ang dami mong pangalan, pero nag-iisa ka.</div>
+            <div class="sentence" data-sentence="2">I am more than grateful that you are my FRIEND—a generous, loving, genuine, caring, pure, crazy, jolly, ulile friend. I don’t know what kind of good karma I must’ve earned to deserve friends like you all—but especially you.</div>
+            <div class="sentence" data-sentence="3">You made my internship journey interesting, unforgettable even. You gave me something to look forward to, day after day. And now as I write this, pukingina naiiyak pa ako sa part na ‘to habang sinusulat—hayop ka talaga. That’s how much this meant to me.</div>
+            <div class="sentence" data-sentence="4">This little webpage is my way of saying thank you, my way of trying to reciprocate the love and generosity you showed us (you showed me). Coffee theme, kasi alam mo na, we bonded best over a bitter cup of kape... and somehow, even bitterness tasted sweet when shared with you.</div>
+            <div class="sentence" data-sentence="5">Things won’t ever be the same. The way I see conversations, the way I enjoy meals, the way I take siesta breaks—iba na. And our pantry sessions, our shared guilt after backstabbing people for fun, no one else could ever top that. That’s our thing. Ours lang.</div>
+            <div class="sentence" data-sentence="6">Di ko pa sure kung kailan ko ‘to isesend—maybe after our trip to Maple Grove this Friday para mas emotional. But then again, magkikita pa pala tayo sa early June... bahala na. try ko muna itago para isipin mo na I don't have anything for you hsagshagshgas.</div>
+            <div class="sentence" data-sentence="7">To my whole Servpro family—Mam Jisika, Mam Gwyn Macollete, Mam Dulce, Mam Romaniel, Mam Katherine (true name muna ngayon), Mam Adella (ultukin), Mam Gly (ulile)—I’ll miss you all.</div>
+            <div class="sentence" data-sentence="8">But Ron-Ron, I will miss you the most.</div>
+            <div class="sentence" data-sentence="9">Our chemistry just clicked, and that’s something rare. Something I didn’t expect but will always be thankful for.</div>
+            <div class="sentence" data-sentence="10">I appreciate you. I’m proud of you. And lab na lab ko kayo kahit mga tangahin kayo.</div>
+            <div class="sentence" data-sentence="11">This is goodbye for now, Pards.</div>
+            <div class="sentence" data-sentence="12">Don’t be a stranger.
                 Pakyu. (Pero pakyu na may pagmamahal.)</div>
+
+            <p class="brewing-note" id="brewingNote">Psst. May 13 coffee beans, you know what to do. 🫣</p>
         </div>
 
         <div class="completion-message" id="completionMessage">
@@ -353,180 +490,234 @@
                 <br><br>
                 <span style="float: right; color: #CD853F;">– Mike</span>
             </p>
-        
+
             <div style="margin-top: 25px; text-align: center;">
-                <img src="runrun.jpg" alt="Coffee moment" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                </div>
+                <img src="runrun.jpg" alt="Coffee moment" loading="lazy">
+            </div>
         </div>
-
-
-        
     </div>
 
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal">&times;</span>
+            <h2>Today's Hangout</h2>
+            <p id="activityText"></p>
+        </div>
+    </div>
+
+    <button id="activityBtn" aria-label="Show today's hangout">🎲</button>
+
     <script>
+        /* ================= Bean game ================= */
         let beansCollected = 0;
         const totalBeans = 13;
         let coffeeBeans = [];
         const sentences = document.querySelectorAll('.sentence');
-        
-        // Create background steam
+        const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+        /* Barista commentary — one roast per bean */
+        const brewingLines = [
+            "Psst. May 13 coffee beans, you know what to do. 🫣",
+            "Isa pa lang? Ang bagal mo. 😏",
+            "Two down. Abay Bira, ikaw bibirahin ko ronron.",
+            "Tatlo na. Mas madaming beses mo pa ako ginulpi.",
+            "Fourth bean. Warm-up lang 'yan.",
+            "Halfway-ish na. ☕",
+            "Anim. flash back malala boi.",
+            "Seven. siks-sebennnn. chariz.",
+            "Eight na! Hulog na hulog nanaman.",
+            "Nine. Konti na lang, huwag kang madistract.",
+            "Ten. Kaunti pa, bading.",
+            "Eleven. Umiyak ka na ba? Wait for it.",
+            "Twelve. Isa na lang. Hinga ng malalim muna.",
+            "Omkieeee. ☕ Sana sulit lahat, ronron."
+        ];
+        let lineIdx = 0;
+        const brewingNote = document.getElementById('brewingNote');
+        const brewingText = () => brewingNote.firstChild;
+
+        function setBrewingLine(idx) {
+            lineIdx = ((idx % brewingLines.length) + brewingLines.length) % brewingLines.length;
+            brewingText().textContent = brewingLines[lineIdx];
+            brewingNote.style.animation = 'none';
+            void brewingNote.offsetWidth;
+            brewingNote.style.animation = 'note-bounce 0.35s ease';
+        }
+
         function createSteam() {
             const steamContainer = document.getElementById('steam');
-            for (let i = 0; i < 20; i++) {
+            const count = window.innerWidth < 600 ? 10 : 20;
+            for (let i = 0; i < count; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'steam-particle';
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.width = particle.style.height = Math.random() * 8 + 3 + 'px';
-                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
                 particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
                 steamContainer.appendChild(particle);
             }
         }
 
-        // Create collectible coffee beans
+        function randomBeanPosition() {
+            const w = window.innerWidth, h = window.innerHeight;
+            return {
+                left: Math.random() * Math.max(w - 100, 50) + 30,
+                top: Math.random() * Math.max(h - 260, 80) + 120
+            };
+        }
+
         function createCoffeeBeans() {
             for (let i = 0; i < totalBeans; i++) {
                 const bean = document.createElement('div');
                 bean.className = 'coffee-bean';
-                bean.style.left = Math.random() * (window.innerWidth - 100) + 50 + 'px';
-                bean.style.top = Math.random() * (window.innerHeight - 200) + 150 + 'px';
+                const pos = randomBeanPosition();
+                bean.style.left = pos.left + 'px';
+                bean.style.top = pos.top + 'px';
                 bean.style.animationDelay = Math.random() * 2 + 's';
-                
+
                 bean.addEventListener('click', collectBean);
                 document.body.appendChild(bean);
                 coffeeBeans.push(bean);
             }
         }
 
-        // Custom cursor
         const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX - 12 + 'px';
-            cursor.style.top = e.clientY - 12 + 'px';
-        });
+        if (finePointer.matches) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 12 + 'px';
+                cursor.style.top = e.clientY - 12 + 'px';
+            });
+        }
 
-        // Collect bean function
         function collectBean(e) {
-            const bean = e.target;
-            
-            // Create coffee splash effect
+            const bean = e.currentTarget;
+            if (bean.classList.contains('collected')) return;
+
             for (let i = 0; i < 6; i++) {
                 const splash = document.createElement('div');
                 splash.className = 'coffee-splash';
                 splash.style.left = e.clientX + (Math.random() - 0.5) * 40 + 'px';
                 splash.style.top = e.clientY + (Math.random() - 0.5) * 40 + 'px';
                 document.body.appendChild(splash);
-                
-                setTimeout(() => splash.remove(), 1000);
+                setTimeout(() => splash.remove(), 800);
             }
-            
-            // Remove the bean with animation
-            bean.style.transform = 'scale(0) rotate(360deg)';
-            bean.style.opacity = '0';
+
+            bean.classList.add('collected');
             setTimeout(() => bean.remove(), 300);
-            
-            // Update counter
-            document.getElementById('beanCount').textContent = beansCollected + 1;
-            
-            // Add cursor effect
-            cursor.classList.add('collecting');
-            setTimeout(() => cursor.classList.remove('collecting'), 200);
-            
-            // Reveal the next sentence
-            if (beansCollected < sentences.length) {
-                const sentenceToReveal = sentences[beansCollected];
-                sentenceToReveal.classList.remove('hidden');
-                sentenceToReveal.classList.add('revealed');
-            }
-            
+
             beansCollected++;
-            
-            // Check if all beans collected
+            document.getElementById('beanCount').textContent = beansCollected;
+
+            try { navigator.vibrate && navigator.vibrate(12); } catch (_) {}
+
+            if (finePointer.matches) {
+                cursor.classList.add('collecting');
+                setTimeout(() => cursor.classList.remove('collecting'), 200);
+            }
+
+            if (beansCollected <= sentences.length) {
+                sentences[beansCollected - 1].classList.add('revealed');
+            }
+
+            setBrewingLine(beansCollected);
+
             if (beansCollected === totalBeans) {
                 setTimeout(() => {
+                    brewingNote.classList.add('gone');
                     document.getElementById('completionMessage').classList.add('show');
-                }, 800);
+                    document.getElementById('completionMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 1600);
             }
         }
 
-        // Initialize
         createSteam();
         createCoffeeBeans();
 
-        // Handle window resize
+        let resizeTimer = null;
         window.addEventListener('resize', () => {
-            coffeeBeans.forEach(bean => {
-                if (bean.parentNode) {
-                    bean.style.left = Math.random() * (window.innerWidth - 100) + 50 + 'px';
-                    bean.style.top = Math.random() * (window.innerHeight - 200) + 150 + 'px';
-                }
-            });
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                coffeeBeans.forEach(bean => {
+                    if (bean.parentNode) {
+                        const pos = randomBeanPosition();
+                        bean.style.left = pos.left + 'px';
+                        bean.style.top = pos.top + 'px';
+                    }
+                });
+            }, 200);
         });
 
-        // Add some extra steam particles periodically
-        setInterval(() => {
-            if (document.querySelectorAll('.steam-particle').length < 30) {
-                const particle = document.createElement('div');
-                particle.className = 'steam-particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = particle.style.height = Math.random() * 8 + 3 + 'px';
-                document.getElementById('steam').appendChild(particle);
-                
-                setTimeout(() => particle.remove(), 4000);
-            }
-        }, 2000);
+        /* ============ Live state sync (instant) ============ */
+        const WORKER_URL = "https://turon-admin.zeroeight.workers.dev/";
+        const POLL_FAST = 1000;   // while tab is visible — feels instant
+        const POLL_SLOW = 8000;   // while tab is hidden
 
+        const activityBtn = document.getElementById("activityBtn");
+        const activityModal = document.getElementById("activityModal");
+        const activityText = document.getElementById("activityText");
+        const closeModal = document.getElementById("closeModal");
 
-        function refreshState() {
-            fetch("https://turon-admin.zeroeight.workers.dev/?t=" + Date.now(), { cache: "no-store" })
-            .then(r => r.json())
-            .then(state => {
+        let latestState = null;
+        let lastSignature = null;
+        let pollTimer = null;
 
-                const btn = document.getElementById("activityBtn");
-                const modal = document.getElementById("activityModal");
-                const text = document.getElementById("activityText");
-                const close = document.getElementById("closeModal");
+        function applyState(state) {
+            if (!state || typeof state !== "object") return;
+            latestState = state;
 
-                if (!state.available) {
-                    btn.style.display = "none";
-                    return;
-                }
+            const signature = JSON.stringify(state);
+            if (signature === lastSignature) return;   // no change → don't touch the DOM
+            lastSignature = signature;
 
-                btn.style.display = "block";
-
-                btn.onclick = () => {
-                    text.textContent = state.activity;
-                    modal.classList.add("show");
-                };
-
-                close.onclick = () => {
-                    modal.classList.remove("show");
-                };
-
-                window.onclick = (e) => {
-                    if (e.target === modal)
-                        modal.classList.remove("show");
-                };
-
-            })
-            .catch(err => console.error("Failed to load state:", err));
+            const show = !!(state.available && state.activity);
+            activityBtn.classList.toggle("show", show);
         }
 
-        refreshState();
-        setInterval(refreshState, 2000);
+        async function checkState() {
+            try {
+                const res = await fetch(WORKER_URL + "?t=" + Date.now(), { cache: "no-store" });
+                if (!res.ok) throw new Error("Status " + res.status);
+                applyState(await res.json());
+            } catch (err) {
+                /* keep last known state; retry on next tick */
+            }
+        }
+
+        function startPolling() {
+            clearInterval(pollTimer);
+            pollTimer = setInterval(checkState, document.hidden ? POLL_SLOW : POLL_FAST);
+        }
+
+        // Truly instant when both pages are open in the same browser
+        let channel = null;
+        try {
+            channel = new BroadcastChannel("turon-state");
+            channel.onmessage = (e) => applyState(e.data);
+        } catch (_) {}
+
+        // React immediately to tab switches, refocus and reconnects
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) checkState();
+            startPolling();
+        });
+        window.addEventListener("focus", checkState);
+        window.addEventListener("online", checkState);
+
+        // Modal wiring (once)
+        activityBtn.addEventListener("click", () => {
+            activityText.textContent = latestState && latestState.activity ? latestState.activity : "";
+            activityModal.classList.add("show");
+        });
+        closeModal.addEventListener("click", () => activityModal.classList.remove("show"));
+        activityModal.addEventListener("click", (e) => {
+            if (e.target === activityModal) activityModal.classList.remove("show");
+        });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") activityModal.classList.remove("show");
+        });
+
+        checkState();
+        startPolling();
     </script>
-
-
-<div id="activityModal" class="modal">
-    <div class="modal-content">
-        <span id="closeModal">&times;</span>
-
-        <h2>Today's Hangout</h2>
-
-        <p id="activityText"></p>
-    </div>
-</div>
-
-<button id="activityBtn">🎲</button>
 </body>
 </html>
